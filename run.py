@@ -2,7 +2,7 @@ from bot.bot import bot
 import logging
 import locale
 
-locale.setlocale(locale.LC_ALL, 'es_ES')
+locale.setlocale(locale.LC_ALL, 'es_ES.utf8')
 
 logger = logging.getLogger('__name__')
 logging.basicConfig(level=logging.DEBUG)
