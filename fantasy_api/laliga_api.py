@@ -35,16 +35,21 @@ class LaLigaFantasyAPI(object):
     
     def check_update_cache(self):
         file_path = f"data/{self.cache_file}"
-        mod_time = datetime.fromtimestamp(path.getmtime(file_path))
-        
-        time_from_last_update = (datetime.now()-mod_time)
-        logging.info(f"{time_from_last_update.total_seconds()} seconds from last cached update, from {mod_time}.")
-        if time_from_last_update >= self.update_interval:
-            # Update players cache
+        try:
+            mod_time = datetime.fromtimestamp(path.getmtime(file_path))
+            time_from_last_update = (datetime.now()-mod_time)
+            logging.info(f"{time_from_last_update.total_seconds()} seconds from last cached update, from {mod_time}.")
+            if time_from_last_update >= self.update_interval:
+                # Update players cache
+                data = self.cache_players()
+            else:
+                data = self.get_cached_players()
+        except:
             data = self.cache_players()
-        else:
-            data = self.get_cached_players()
+            
         return data
+        
+
 
     def get_all_players(self, use_cache: bool=True) -> List[FantasyPlayer]:
         if use_cache:
