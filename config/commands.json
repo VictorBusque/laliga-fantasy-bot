@@ -1,0 +1,26 @@
+[
+    {
+        "command": "login",
+        "description": "Para identificarse en LaLiga Fantasy"
+    },
+    {
+        "command": "top",
+        "description": "Para ver información del jugador top de LaLiga Fantasy"
+    },
+    {
+        "command": "random",
+        "description": "Para ver los datos de un jugador aleatorio"
+    },
+    {
+        "command": "weekly",
+        "description": "Para ver el resumen de tu plantilla esta jornada"
+    },
+    {
+        "command": "search",
+        "description": "Acompañada por el nombre de un jugador, muestra resumen. Ejemplo \"/search pedri\" o \"/search torres, Sevilla\""
+    },
+    {
+        "command": "team",
+        "description": "Para ver vista de detalle de un equipo entero. Ejemplo: \"/team Barcelona\""
+    }
+]

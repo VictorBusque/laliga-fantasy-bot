@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from os import getenv
 from bot.user import User
 from fantasy_api.database import FantasyDatabase
-from fantasy_api.models.player_model import position_id_to_name
+from fantasy_api.models.player_model import FantasyPlayer, position_id_to_name
 from fantasy_api.models.lineup_model import pos_to_acronym
 from fantasy_api.laliga_api import LaLigaFantasyAPI
 from random import choice
@@ -68,7 +68,7 @@ def handle_weekly(message: Message):
 		bot.reply_to(message, response, parse_mode="Markdown")
   
 @bot.message_handler(commands=['search'])
-def send_top_player(message: Message):
+def send_search_player(message: Message):
 	n_args = len(message.text.split())
 	if n_args == 1:
 		pass
@@ -85,7 +85,8 @@ def send_top_player(message: Message):
 			"Jugador": player.nickname,
 			"Pos": pos_to_acronym.get(position_id_to_name.get(player.positionId).title()),
 			"Equipo": player.team.name,
-			"Puntos": player.points
+			"Puntos": player.points,
+   			"Link": f"/p{player.id}"
 		} for player in players]
 	if player_info:
 		response = markdownTable(player_info).setParams(row_sep = 'always', padding_width = 2, padding_weight = 'centerright').getMarkdown()
@@ -94,7 +95,7 @@ def send_top_player(message: Message):
 	bot.reply_to(message, response, parse_mode="Markdown")
 	
 @bot.message_handler(commands=['team'])
-def send_top_player(message: Message):
+def send_team_lineup(message: Message):
 	n_args = len(message.text.split())
 	if n_args == 1:
 		pass
@@ -115,4 +116,14 @@ def send_top_player(message: Message):
 			response = markdownTable(player_info).setParams(row_sep = 'always', padding_width = 2, padding_weight = 'centerright').getMarkdown()
 	else:
 		response = "No he encontrado el equipo que mencionas."
+	bot.reply_to(message, response, parse_mode="Markdown")
+ 
+@bot.message_handler(regexp="/p[0-9]+")
+def send_custom_player(message: Message):
+	player_id = message.text[2:]
+	player: FantasyPlayer = LaLigaFantasyAPI().get_all_players().get(player_id)
+	if not player:
+		response = "No existe el jugador indicado."
+	else:
+		response = player.__describe__()
 	bot.reply_to(message, response, parse_mode="Markdown")
