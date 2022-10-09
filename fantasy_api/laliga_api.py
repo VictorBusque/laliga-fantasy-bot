@@ -3,7 +3,7 @@ from typing import List
 from bot.user import User
 from fantasy_api.models.lineup_model import UserLineup
 from fantasy_api.models.player_model import FantasyPlayer
-from os import path, getenv
+from os import path, getenv, makedirs
 from json import load as jsonl
 from json import dump as jsond
 from datetime import datetime, timedelta
@@ -24,6 +24,9 @@ class LaLigaFantasyAPI(object):
         
     def cache_players(self):
         data = self.collect_players()
+        # Need to create the data folder the first time any request is executed.
+        if not path.exists("data"):
+            makedirs("data")
         with open(f"data/{self.cache_file}", "w", encoding="utf8") as f:
             jsond(data, f, indent=4)
         return data
