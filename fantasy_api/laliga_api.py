@@ -66,10 +66,11 @@ class LaLigaFantasyAPI(object):
         if response.ok:
             return response.json().get('weekNumber')
     
-    def get_curr_week_results(self, user: User):
-        curr_week = self.get_curr_week()
+    def get_week_results(self, user: User, week_num: int=None):
+        if not week_num:
+            week_num = self.get_curr_week()
         user_team_id = user.team_id
-        curr_week_points_url = self.lineup_url.format(user_team_id, curr_week)
+        curr_week_points_url = self.lineup_url.format(user_team_id, week_num)
         headers = {
             "Authorization": f"Bearer {user.bearer_token}"
         }
