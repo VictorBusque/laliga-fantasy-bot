@@ -64,3 +64,5 @@ class FantasyDatabase:
         player_ids = Utils.find_closest_n(player_name, candidate_names, n)
         return [self.player_data[player_id] for player_id in player_ids]
         
+    def get_top_players(self) -> List[FantasyPlayer]:
+        pass

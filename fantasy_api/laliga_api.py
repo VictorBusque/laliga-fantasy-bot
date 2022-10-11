@@ -51,8 +51,6 @@ class LaLigaFantasyAPI(object):
             data = self.cache_players()
             
         return data
-        
-
 
     def get_all_players(self, use_cache: bool=True) -> List[FantasyPlayer]:
         if use_cache:

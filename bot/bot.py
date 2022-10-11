@@ -26,7 +26,7 @@ def send_random_player(message: Message):
 	response = f"Tu jugador aleatorio es:\n{player.__describe__()}"
 	bot.reply_to(message, response, parse_mode="Markdown")
 
-@bot.message_handler(commands=['top'])
+@bot.message_handler(commands=['top_player'])
 def send_top_player(message: Message):
 	players = LaLigaFantasyAPI().get_all_players()
 	players_list = list(players.values())
@@ -116,6 +116,7 @@ def send_team_lineup(message: Message):
 				"Pos": pos_to_acronym.get(position_id_to_name.get(player.positionId).title()),
 				"Puntos": player.points
 			} for player in players]
+		player_info.sort(key = lambda p: p.get("Puntos"), reverse=True)
 		if player_info:
 			response = markdownTable(player_info).setParams(row_sep = 'always', padding_width = 2, padding_weight = 'centerright').getMarkdown()
 	else:
