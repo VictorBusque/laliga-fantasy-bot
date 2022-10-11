@@ -57,12 +57,16 @@ def handle_login(message: Message):
 @bot.message_handler(commands=['weekly'])
 def handle_weekly(message: Message):
 	telegram_user_id = message.from_user.id
+	if len(message.text.split()) == 2 and message.text.split()[1].isdigit():
+		week_num = int(message.text.split()[1])
+	else:
+		week_num = None
 	try:
 		user = User.from_telegram_id(telegram_user_id)
 	except:
 		bot.reply_to(message, "No estás identificado. Usa /login para identificarte.")
 		return
-	week_results = LaLigaFantasyAPI().get_curr_week_results(user)
+	week_results = LaLigaFantasyAPI().get_week_results(user, week_num)
 	responses = week_results.describe_points()
 	for response in responses:
 		bot.reply_to(message, response, parse_mode="Markdown")

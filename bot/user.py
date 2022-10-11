@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from typing import Dict, List
 from json import dump as jsond
 from json import load as jsonl
+from os import path, getenv, makedirs
 
 DATABASE_FILE = "user_database.json"
 
@@ -22,6 +23,9 @@ class User(BaseModel):
             logging.warning("There are no users on the DB yet. Creating first one.")
             user_db = {}
         user_db[self.telegram_user_id] = self.dict()
+        # Need to create the data folder the first time any request is executed.
+        if not path.exists("data"):
+            makedirs("data")
         with open(f"data/{DATABASE_FILE}", "w", encoding="utf8") as f:
             jsond(user_db, f, indent=4)
             
