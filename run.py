@@ -27,7 +27,7 @@ if __name__ == "__main__":
         base_commands = []
     player_commands = []
     player_data = list(player_data.values())
-    player_data.sort(key = lambda p: p.get("points"))
+    player_data.sort(key = lambda p: p.get("points"), reverse=True)
     for player in player_data:
         player_commands.append(BotCommand(f"p{player.get('id')}", f"Info de {player.get('nickname')}"))
     commands = (base_commands + player_commands)[:100]
