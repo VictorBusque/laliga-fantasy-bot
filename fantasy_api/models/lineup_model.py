@@ -84,6 +84,9 @@ class UserLineup(BaseModel):
         results += strikers
         table_data = [player.__describe_week__() for player in results]
         print(table_data)
-        description = [f"En lo que va de jornada llevas *{self.points}* puntos."]
-        description.append(markdownTable(table_data).setParams(row_sep = 'always', padding_width = 2, padding_weight = 'centerright').getMarkdown())
+        if table_data:
+            description = [f"En esta jornada llevas *{self.points}* puntos."]
+            description.append(markdownTable(table_data).setParams(row_sep = 'always', padding_width = 2, padding_weight = 'centerright').getMarkdown())
+        else:
+            description = ["Esta jornada tus jugadores todavía no han puntuado."]
         return description
