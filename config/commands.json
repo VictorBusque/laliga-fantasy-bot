@@ -8,12 +8,16 @@
         "description": "Para ver información del jugador top de LaLiga Fantasy"
     },
     {
+        "command": "top_players",
+        "description": "Para ver información del los jugadores top de LaLiga Fantasy"
+    },
+    {
         "command": "random",
         "description": "Para ver los datos de un jugador aleatorio"
     },
     {
-        "command": "weekly",
-        "description": "Para ver el resumen de tu plantilla esta jornada"
+        "command": "week",
+        "description": "Para ver el resumen de tu plantilla de una jornada (por defecto la actual)"
     },
     {
         "command": "search",

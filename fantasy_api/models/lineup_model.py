@@ -44,7 +44,7 @@ class UserPlayer(BaseModel):
             "Jugador": self.playerMaster.nickname, 
             "Pos": pos_to_acronym.get(self.playerMaster.position), 
             "Equipo": self.playerMaster.team.shortName if self.playerMaster.team.shortName 
-                        else self.playerMaster.team.name, 
+                        else self.playerMaster.team.name,
             "Puntos": self.playerMaster.weekPoints
         }
 
@@ -82,11 +82,11 @@ class UserLineup(BaseModel):
         results += defenders
         results += midfielders
         results += strikers
+        results.sort(key = lambda p: p.playerMaster.weekPoints, reverse=True)
         table_data = [player.__describe_week__() for player in results]
-        print(table_data)
         if table_data:
-            description = [f"En esta jornada llevas *{self.points}* puntos."]
+            description = [f"En la jornada has conseguido *{self.points}* puntos."]
             description.append(markdownTable(table_data).setParams(row_sep = 'always', padding_width = 2, padding_weight = 'centerright').getMarkdown())
         else:
-            description = ["Esta jornada tus jugadores todavía no han puntuado."]
+            description = ["Esta jornada tus jugadores no han puntuado."]
         return description

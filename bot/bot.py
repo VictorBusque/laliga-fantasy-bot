@@ -35,11 +35,31 @@ def send_top_player(message: Message):
 	response = f"El jugador TOP del campeonato es:\n{player.__describe__()}"
 	bot.reply_to(message, response, parse_mode="Markdown")
 
+@bot.message_handler(commands=['top_players'])
+def send_top_players(message: Message):
+	if len(message.text.split()) == 2 and message.text.split()[1].isdigit():
+		top_n = int(message.text.split()[1])
+	else:
+		top_n = 10
+	players = LaLigaFantasyAPI().get_all_players()
+	players_list = list(players.values())
+	players_list.sort(key=lambda p: p.points, reverse=True)
+	players = players_list[:top_n]
+	player_info = [{
+			"Jugador": player.nickname,
+			"Pos": pos_to_acronym.get(position_id_to_name.get(player.positionId).title()),
+			"Equipo": player.team.get_shortname(),
+			"Puntos": player.points,
+   			"Link": f"/p{player.id}"
+		} for player in players]
+	player_info.sort(key = lambda p: p.get("Puntos"), reverse=True)
+	response = markdownTable(player_info).setParams(row_sep = 'always', padding_width = 2, padding_weight = 'centerright').getMarkdown()
+	bot.reply_to(message, response, parse_mode="Markdown")
+
 @bot.message_handler(commands=['login'])
 def handle_login(message: Message):
 	# Expecting message like "/login {team_id} {league_id} {bearer_token}"
 	n_args = len(message.text.split())
-	print(n_args)
 	if n_args == 4:
 		user_team_id = message.text.split()[1]
 		user_league_id = message.text.split()[2]
@@ -82,13 +102,12 @@ def send_search_player(message: Message):
 			team_name = ' '.join(message.text.split()[1:]).split(",")[1].strip()
 		except:
 			team_name = None
-	print(player_name, team_name)
 	player_data = LaLigaFantasyAPI().get_all_players()
 	players = FantasyDatabase(player_data).get_closest_players(player_name, team_name, 5)
 	player_info = [{
 			"Jugador": player.nickname,
 			"Pos": pos_to_acronym.get(position_id_to_name.get(player.positionId).title()),
-			"Equipo": player.team.name,
+			"Equipo": player.team.get_shortname(),
 			"Puntos": player.points,
    			"Link": f"/p{player.id}"
 		} for player in players]
@@ -122,7 +141,7 @@ def send_team_lineup(message: Message):
 	else:
 		response = "No he encontrado el equipo que mencionas."
 	bot.reply_to(message, response, parse_mode="Markdown")
- 
+
 @bot.message_handler(regexp="/p[0-9]+")
 def send_custom_player(message: Message):
 	player_id = message.text[2:]

@@ -31,7 +31,8 @@ if __name__ == "__main__":
     for player in player_data:
         player_commands.append(BotCommand(f"p{player.get('id')}", f"Info de {player.get('nickname')}"))
     commands = (base_commands + player_commands)[:100]
-    print(len(commands))
+    logging.info(f"Loading {len(commands)} commands")
+    logging.info([(comm.command, comm.description) for comm in commands])
     bot.set_my_commands(
         commands
     )
