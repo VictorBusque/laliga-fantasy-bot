@@ -12,6 +12,7 @@ import logging
 class LaLigaFantasyAPI(object):
     def __init__(self, bearer_token: str=None, user_team_id: str=None, user_league_id: str=None):
         self.players_url = "https://api.laligafantasymarca.com/api/v3/players?x-lang=es"
+        self.teams_url = "https://api.laligafantasymarca.com/stats/v1/players/status?x-lang=es"
         self.cache_file = "players_data_cache.json"
         self.update_interval = timedelta(minutes=2)
         self.lineup_url = "https://api.laligafantasymarca.com/api/v3/teams/{0}/lineup/week/{1}?x-lang=es"
@@ -51,8 +52,6 @@ class LaLigaFantasyAPI(object):
             data = self.cache_players()
             
         return data
-        
-
 
     def get_all_players(self, use_cache: bool=True) -> List[FantasyPlayer]:
         if use_cache:
