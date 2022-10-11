@@ -29,5 +29,4 @@ class Utils:
         item_distances = [(_id, name, Utils.distance(search, name))
                             for (_id, name) in list_to_match]
         item_distances.sort(key=lambda x: x[2], reverse=True)
-        print(item_distances)
         return [_id for _id, _, dist in item_distances[:n] if dist >= min_sim]
