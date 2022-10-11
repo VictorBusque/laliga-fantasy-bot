@@ -54,8 +54,8 @@ def handle_login(message: Message):
 	else:
 		bot.reply_to(message, "Ha habido un error. Esperaba un mensaje siguiendo el formato:\n '/login <team_id> <league_id> <bearer_token>")
   
-@bot.message_handler(commands=['weekly'])
-def handle_weekly(message: Message):
+@bot.message_handler(commands=['week'])
+def handle_week(message: Message):
 	telegram_user_id = message.from_user.id
 	if len(message.text.split()) == 2 and message.text.split()[1].isdigit():
 		week_num = int(message.text.split()[1])
