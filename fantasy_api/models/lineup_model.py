@@ -11,7 +11,7 @@ class UserPlayerLastStat(BaseModel):
 
 class UserPlayerMaster(BaseModel):
     points: int
-    lastStats: List
+    lastStats: Optional[List] = []
     averagePoints: float
     images: ImagesObject
     id: str
@@ -67,22 +67,27 @@ class UserLineup(BaseModel):
     points: int
     initialPoints: int
     teamSnapshotTookOn: str
-    
-    def describe_points(self):
+
+    def get_player_points(self):
         results = []
         players: List[UserPlayer] = []
-        if self.formation.goalkeeper[0].playerMaster.weekPoints != None:
-            players.append(self.formation.goalkeeper[0])
+        goalkeepers = [goalkeeper for goalkeeper in self.formation.goalkeeper
+                        if goalkeeper.playerMaster.weekPoints != None]
         defenders = [defender for defender in self.formation.defender
                         if defender.playerMaster.weekPoints != None]
         midfielders = [midfielder for midfielder in self.formation.midfield
                         if midfielder.playerMaster.weekPoints != None]
         strikers = [striker for striker in self.formation.striker
                         if striker.playerMaster.weekPoints != None]
+        results += goalkeepers
         results += defenders
         results += midfielders
         results += strikers
         results.sort(key = lambda p: p.playerMaster.weekPoints, reverse=True)
+        return results
+    
+    def describe_points(self) -> List[str]:
+        results = self.get_player_points()
         table_data = [player.__describe_week__() for player in results]
         if table_data:
             description = [f"En la jornada has conseguido *{self.points}* puntos."]
@@ -90,3 +95,28 @@ class UserLineup(BaseModel):
         else:
             description = ["Esta jornada tus jugadores no han puntuado."]
         return description
+    
+    def compare(self, previous_update=None) -> List[str]:
+        if not previous_update:
+            return None
+        results = self.get_player_points()
+        previous_results = previous_update.get_player_points()
+        
+        results = {player.playerMaster.id: player for player in results}
+        previous_results = {player.playerMaster.id: player for player in previous_results}
+        
+        utterances = []
+        for player_id, player in results.items():
+            curr_player_points = player.playerMaster.weekPoints
+            prev_player_points = previous_results.get(player_id).playerMaster.weekPoints
+            if curr_player_points != prev_player_points:
+                diff = curr_player_points - prev_player_points
+                if diff > 0: 
+                    verb = "ganado"
+                    emoji = "💪"
+                elif diff < 0: 
+                    verb = "perdido"
+                    emoji = "👎"
+                utterances.append(f"⚽ Actualización ⚽\n{player.playerMaster.nickname} ha {verb} {diff} puntos {emoji}. Tiene {curr_player_points}.")
+        return utterances
+            

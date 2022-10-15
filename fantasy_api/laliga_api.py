@@ -1,7 +1,7 @@
 import requests
 from typing import List
 from bot.user import User
-from fantasy_api.models.lineup_model import UserLineup
+from fantasy_api.models.lineup_model import UserLineup, UserPlayer
 from fantasy_api.models.player_model import FantasyPlayer
 from os import path, getenv, makedirs
 from json import load as jsonl
@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 import logging
 
 class LaLigaFantasyAPI(object):
-    def __init__(self, bearer_token: str=None, user_team_id: str=None, user_league_id: str=None):
+    def __init__(self):
         self.players_url = "https://api.laligafantasymarca.com/api/v3/players?x-lang=es"
         self.teams_url = "https://api.laligafantasymarca.com/stats/v1/players/status?x-lang=es"
         self.cache_file = "players_data_cache.json"
@@ -77,4 +77,13 @@ class LaLigaFantasyAPI(object):
         if response.ok:
             api_data = response.json()
             user_lineup = UserLineup(**api_data)
+            def remove_laststats(players: List[UserPlayer]):
+                for player in players:
+                    player.playerMaster.lastStats = []
+                return players
+            # Storage optimization since laststats is a huge unnecessary data structure.
+            user_lineup.formation.goalkeeper = remove_laststats(user_lineup.formation.goalkeeper)
+            user_lineup.formation.defender = remove_laststats(user_lineup.formation.defender)
+            user_lineup.formation.midfield = remove_laststats(user_lineup.formation.midfield)
+            user_lineup.formation.striker = remove_laststats(user_lineup.formation.striker)
             return user_lineup

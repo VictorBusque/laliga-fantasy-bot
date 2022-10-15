@@ -69,6 +69,10 @@ def handle_login(message: Message):
 					team_id=user_team_id,
 					league_id=user_league_id,
 					bearer_token=bearer_token)
+		lineup = LaLigaFantasyAPI().get_week_results(user)
+		user.live_updates_active=True
+		user.last_update=lineup
+		user.last_update_week=LaLigaFantasyAPI().get_curr_week()
 		user.save_or_update()
 		bot.reply_to(message, "Perfecto, te he dado de alta en el bot. Puedes usar comandos personalizados para tu equipo.", parse_mode="Markdown")
 	else:
