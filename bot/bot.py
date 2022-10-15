@@ -155,3 +155,28 @@ def send_custom_player(message: Message):
 	else:
 		response = player.__describe__()
 	bot.reply_to(message, response, parse_mode="Markdown")
+ 
+ 
+@bot.message_handler(commands=['updates'])
+def activate_deactivate_updates(message: Message):
+	user = User.from_telegram_id(message.from_user.id)
+	if len(message.text.split()) < 2:
+		adj = "activadas" if user.live_updates_active else "desactivadas"
+		response = f"Las actualizaciones en directo están {adj}."
+	else:
+		state = message.text.split()[1].lower()
+		if state == "on":
+			if user.live_updates_active:
+				response = "Ya tenías las actualizaciones en directo activadas."
+			else:
+				user.live_updates_active = True
+				user.save_or_update()
+				response = "Acabas de activar las actualizaciones en directo."
+		elif state == "off":
+			if not user.live_updates_active:
+				response = "Ya tenías las actualizaciones en directo desactivadas."
+			else:
+				user.live_updates_active = False
+				user.save_or_update()
+				response = "Acabas de desactivar las actualizaciones en directo."
+	bot.reply_to(message, response, parse_mode="Markdown")

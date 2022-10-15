@@ -58,6 +58,8 @@ def notification_thread():
                     updates = curr_lineup.compare(prev_lineup)
                     user.last_update = curr_lineup
                     user.save_or_update()
+                    if updates:
+                        logging.info("New updates on lineup. Sending notifications.")
                     for update in updates:
                         bot.send_message(user.telegram_user_id, update)
                 else:
@@ -65,6 +67,7 @@ def notification_thread():
                     user.last_update = curr_lineup
                     user.last_update_week = curr_week
                     user.save_or_update()
+        logging.info("Updated and sent notifications to all users.")
         sleep(UPDATE_INTERVAL)
                 
             
