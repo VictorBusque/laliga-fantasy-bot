@@ -43,8 +43,12 @@ class User(BaseModel):
    
     @staticmethod     
     def load_users():
-        with open(f"data/{DATABASE_FILE}", "r", encoding="utf8") as f:
-            user_db = jsonl(f)
-            for telegram_user_id in user_db.keys():
-                user = user_db.get(str(telegram_user_id))
-                yield User(**user)
+        try:
+            with open(f"data/{DATABASE_FILE}", "r", encoding="utf8") as f:
+                user_db = jsonl(f)
+                for telegram_user_id in user_db.keys():
+                    user = user_db.get(str(telegram_user_id))
+                    yield User(**user)
+        except:
+            logging.warn("There is no DB yet. It will be created when someone logs in.")
+            return []
