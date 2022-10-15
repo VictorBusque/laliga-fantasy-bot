@@ -5,6 +5,8 @@ from json import dump as jsond
 from json import load as jsonl
 from os import path, getenv, makedirs
 
+from fantasy_api.models.lineup_model import UserLineup
+
 DATABASE_FILE = "user_database.json"
 
 
@@ -14,6 +16,9 @@ class User(BaseModel):
     team_id: str=None
     league_id: str=None
     bearer_token: str=None
+    live_updates_active: bool=True
+    last_update: UserLineup=None
+    last_update_week: int=-1
 
     def save_or_update(self):
         try:
@@ -35,3 +40,15 @@ class User(BaseModel):
             user_db = jsonl(f)
             user = user_db.get(str(telegram_user_id))
             return User(**user)
+   
+    @staticmethod     
+    def load_users():
+        try:
+            with open(f"data/{DATABASE_FILE}", "r", encoding="utf8") as f:
+                user_db = jsonl(f)
+                for telegram_user_id in user_db.keys():
+                    user = user_db.get(str(telegram_user_id))
+                    yield User(**user)
+        except:
+            logging.warn("There is no DB yet. It will be created when someone logs in.")
+            return []

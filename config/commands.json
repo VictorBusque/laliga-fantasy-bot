@@ -26,5 +26,9 @@
     {
         "command": "team",
         "description": "Para ver vista de detalle de un equipo entero. Ejemplo: \"/team Barcelona\""
+    },
+    {
+        "command": "updates",
+        "description": "Para activar['on'] o desactivar ['off'] las actualizaciones en directo. Ejemplo: \"/updates on\"."
     }
 ]
