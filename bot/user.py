@@ -25,7 +25,7 @@ class User(BaseModel):
             with open(f"data/{DATABASE_FILE}", "r", encoding="utf8") as f:
                 user_db = jsonl(f)
         except:
-            logging.warninging("There are no users on the DB yet. Creating first one.")
+            logging.warning("There are no users on the DB yet. Creating first one.")
             user_db = {}
         user_db[self.telegram_user_id] = self.dict()
         # Need to create the data folder the first time any request is executed.
