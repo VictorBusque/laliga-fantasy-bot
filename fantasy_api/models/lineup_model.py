@@ -1,3 +1,4 @@
+import logging
 from pydantic import BaseModel
 from typing import Dict, List, Optional
 from fantasy_api.models.player_model import ImagesObject
@@ -68,7 +69,7 @@ class UserLineup(BaseModel):
     initialPoints: int
     teamSnapshotTookOn: str
 
-    def get_player_points(self):
+    def get_player_points(self) -> List[UserPlayer]:
         results = []
         players: List[UserPlayer] = []
         goalkeepers = [goalkeeper for goalkeeper in self.formation.goalkeeper
@@ -98,6 +99,7 @@ class UserLineup(BaseModel):
     
     def compare(self, previous_update=None) -> List[str]:
         if not previous_update:
+            logging.warning("Previous update is Null, next time it'll work.")
             return None
         results = self.get_player_points()
         previous_results = previous_update.get_player_points()
@@ -108,15 +110,19 @@ class UserLineup(BaseModel):
         utterances = []
         for player_id, player in results.items():
             curr_player_points = player.playerMaster.weekPoints
-            prev_player_points = previous_results.get(player_id).playerMaster.weekPoints
-            if curr_player_points != prev_player_points:
-                diff = curr_player_points - prev_player_points
-                if diff > 0: 
-                    verb = "ganado"
-                    emoji = "💪"
-                elif diff < 0: 
-                    verb = "perdido"
-                    emoji = "👎"
-                utterances.append(f"⚽ Actualización ⚽\n{player.playerMaster.nickname} ha {verb} {diff} puntos {emoji}. Tiene {curr_player_points}.")
+            prev_player = previous_results.get(player_id)
+            if prev_player:
+                prev_player_points = previous_results.get(player_id).playerMaster.weekPoints
+                if curr_player_points != prev_player_points:
+                    diff = curr_player_points - prev_player_points
+                    if diff > 0:
+                        verb = "ganado"
+                        emoji = "💪"
+                    elif diff < 0: 
+                        verb = "perdido"
+                        emoji = "👎"
+                    utterances.append(f"⚽ Actualización ⚽\n{player.playerMaster.nickname} ha {verb} {diff} puntos {emoji}. Tiene {curr_player_points} puntos.")
+            else:
+                utterances.append(f"⚽ Actualización ⚽\n{player.playerMaster.nickname} acaba de empezar a jugar el partido. Tiene {curr_player_points} puntos.")
         return utterances
             

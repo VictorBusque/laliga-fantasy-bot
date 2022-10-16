@@ -79,7 +79,10 @@ class LaLigaFantasyAPI(object):
             user_lineup = UserLineup(**api_data)
             def remove_laststats(players: List[UserPlayer]):
                 for player in players:
-                    player.playerMaster.lastStats = []
+                    try:
+                        player.playerMaster.lastStats = []
+                    except:
+                        pass
                 return players
             # Storage optimization since laststats is a huge unnecessary data structure.
             user_lineup.formation.goalkeeper = remove_laststats(user_lineup.formation.goalkeeper)
@@ -87,3 +90,5 @@ class LaLigaFantasyAPI(object):
             user_lineup.formation.midfield = remove_laststats(user_lineup.formation.midfield)
             user_lineup.formation.striker = remove_laststats(user_lineup.formation.striker)
             return user_lineup
+        else:
+            logging.error(f"Response from laligaAPI was: {response.status_code}")

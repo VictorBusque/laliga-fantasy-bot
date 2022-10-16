@@ -50,5 +50,5 @@ class User(BaseModel):
                     user = user_db.get(str(telegram_user_id))
                     yield User(**user)
         except:
-            logging.warn("There is no DB yet. It will be created when someone logs in.")
+            logging.warning("There is no DB yet. It will be created when someone logs in.")
             return []
