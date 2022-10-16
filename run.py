@@ -10,10 +10,7 @@ from threading import Thread
 
 locale.setlocale(locale.LC_ALL, 'es_ES.utf8')
 
-logger = logging.getLogger()
-logging.basicConfig(level=logging.DEBUG)
-logger.addHandler(logging.Formatter(fmt='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S'))
-logger.addHandler(logging.StreamHandler())
+logger = logging.getLogger('__main__')
 logger.setLevel(logging.DEBUG)
 
 UPDATE_INTERVAL = 90
@@ -62,8 +59,10 @@ def notification_thread():
                         user.save_or_update()
                         if updates:
                             logging.info("New updates on lineup. Sending notifications.")
-                        for update in updates:
-                            bot.send_message(user.telegram_user_id, update)
+                            for update in updates:
+                                bot.send_message(user.telegram_user_id, update)
+                        else:
+                            logging.warning("There are no updates to notify on this lineup.")
                     else:
                         # New week, updating user's internal thing and notifying updates.
                         user.last_update = curr_lineup
@@ -71,7 +70,7 @@ def notification_thread():
                         user.save_or_update()
             logging.info("Updated and sent notifications to all users.")
         except Exception as e:
-            logging.warn(f"Could not perform notification iteration due to: {str(e)}")
+            logging.warning(f"Could not perform notification iteration due to: {str(e)}")
         sleep(UPDATE_INTERVAL)
                 
             
