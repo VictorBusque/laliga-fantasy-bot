@@ -35,5 +35,5 @@ class FantasyTeam(BaseModel):
             else:
                 with open("data/teams_data_cache.json", "r", encoding="utf8") as f:
                     naming_map = jsonl(f)
-            return naming_map[str(self.id)]
+            return naming_map.get(str(self.id)) if naming_map.get(str(self.id)) else self.name
     
